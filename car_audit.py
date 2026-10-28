@@ -908,6 +908,15 @@ def build_text_report(meta, res, period, calib):
     ]
     if calib is not None:
         seen = res["rides"] or 0
+        if res["rides"] is None:
+            lines += ["CALIBRATION: you drove %d ride(s); the board wrote %d time(s), all with a "
+                      "fake date." % (calib, len(res["bad_clock"])),
+                      "  -> " + ("One write per ride, but undated: rides could be counted only if "
+                                 "you audit after every ride." if len(res["bad_clock"]) == calib else
+                                 "Fewer writes than rides: this board cannot be used to count rides."),
+                      ""]
+            calib = None
+    if calib is not None:
         lines += ["CALIBRATION: you drove %d ride(s); the drive shows %s." % (calib, seen),
                   "  -> " + ("This board leaves usable traces." if seen == calib else
                              "Partial traces only - treat ride counts as a minimum." if seen else
